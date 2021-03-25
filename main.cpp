@@ -15,18 +15,10 @@ int rot = 0;
 struct point {
 	double x;
 	double y;
+	double z;
 };
 
-void myInit(void)
-{
-	glClearColor(1.0, 1.0, 1.0, 0.0);      // set the bg color to a bright white
-	glColor3f(0.0f, 0.0f, 0.0f);           // set the drawing color to black 
-	glPointSize(1.0);		            //set the point size to 4 by 4 pixels
-	glMatrixMode(GL_PROJECTION);// set up appropriate matrices- to be explained 
-	glLoadIdentity();// to be explained
-	gluOrtho2D(0.0, float(width), 0.0, float(height));// to be explained
-}
-
+// debugging
 void keyboard(unsigned char key,int x,int y)
 {
 	if(key==27) exit(1);
@@ -38,54 +30,52 @@ void keyboard(unsigned char key,int x,int y)
 // the redraw function
 void myDisplay(void)
 {
-	glClearColor( 0, 0, 0, 0 );
 	glClear ( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 
 	glLoadIdentity();		// clear modelview
-	glTranslatef( 0,-3,-8 );
 
 	// debugging
+	glTranslatef(0,-2,-8);
 	glRotatef(rot,0,1,0);
 
+	point lineList1[8] = {};
+
+	// back face
+	lineList1[0].x = 0;lineList1[0].y = 1;lineList1[0].z = -1;
+	lineList1[1].x = 1;lineList1[1].y = 1;lineList1[1].z = -1;
+	lineList1[2].x = 1;lineList1[2].y = 0;lineList1[2].z = -1;
+	lineList1[3].x = 0;lineList1[3].y = 0;lineList1[3].z = -1;
+
+	// front face
+	lineList1[4].x = 0;lineList1[4].y = 1;lineList1[4].z = -2;
+	lineList1[5].x = 1;lineList1[5].y = 1;lineList1[5].z = -2;
+	lineList1[6].x = 1;lineList1[6].y = 0;lineList1[6].z = -2;
+	lineList1[7].x = 0;lineList1[7].y = 0;lineList1[7].z = -2;
+
+	// vertices on 1 side
+	int sides1 = 4;
+
 	glBegin(GL_LINES);
-		// back face
-		glVertex3i(0, 1, -1);
-		glVertex3i(1, 1, -1);
-
-		glVertex3i(1, 1, -1);
-		glVertex3i(1, 0, -1);
-
-		glVertex3i(1, 0, -1);
-		glVertex3i(0, 0, -1);
-
-		glVertex3i(0, 0, -1);
-		glVertex3i(0, 1, -1);
-
 		// front face
-		glVertex3i(0, 1, -2);
-		glVertex3i(1, 1, -2);
-
-		glVertex3i(1, 1, -2);
-		glVertex3i(1, 0, -2);
-
-		glVertex3i(1, 0, -2);
-		glVertex3i(0, 0, -2);
-
-		glVertex3i(0, 0, -2);
-		glVertex3i(0, 1, -2);
-
-		// connect sides
-		glVertex3i(1, 1, -2);
-		glVertex3i(1, 1, -1);
-
-		glVertex3i(0, 0, -2);
-		glVertex3i(0, 0, -1);
-
-		glVertex3i(0, 1, -2);
-		glVertex3i(0, 1, -1);
-
-		glVertex3i(1, 0, -2);
-		glVertex3i(1, 0, -1);
+		for (int i = 0; i < sides1; i++) {
+			glVertex3d(lineList1[i].x, lineList1[i].y, lineList1[i].z);
+			glVertex3d(lineList1[(i+1)%sides1].x, lineList1[(i+1)%sides1].y, lineList1[(i+1)%sides1].z);
+		}
+		// back face
+		for (int i = sides1; i < sides1*2; i++) {
+			glVertex3d(lineList1[i].x, lineList1[i].y, lineList1[i].z);
+			if (i == sides1*2-1) {
+				glVertex3d(lineList1[sides1].x, lineList1[sides1].y, lineList1[sides1].z);
+			}
+			else {
+				glVertex3d(lineList1[i+1].x, lineList1[i+1].y, lineList1[i+1].z);
+			}
+		}
+		// connect the sides
+		for (int i = 0; i < sides1; i++) {
+			glVertex3d(lineList1[i].x, lineList1[i].y, lineList1[i].z);
+			glVertex3d(lineList1[i].x, lineList1[i].y, lineList1[i+sides1].z);
+		}
 	glEnd();
 
 	glutSwapBuffers();
@@ -104,11 +94,11 @@ int main(int argc, char **argv)
 	glutCreateWindow("3D Transformations"); // open the screen window(with its exciting title)
 	glutDisplayFunc(myDisplay);     // register the redraw function
 	glutKeyboardFunc(keyboard);
-
-	glMatrixMode( GL_PROJECTION );
+	glClearColor(0, 0, 0, 0);
+	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
-	gluPerspective( 90,1.0,0.1,100 );
-	glMatrixMode( GL_MODELVIEW );
+	gluPerspective(90,1.0,0.1,100);
+	glMatrixMode(GL_MODELVIEW);
 
 	// myInit();                   
 	glutMainLoop(); 		     // go into a perpetual loop
