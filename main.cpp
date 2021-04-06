@@ -339,9 +339,9 @@ void keyboard(unsigned char key,int x,int y)
 {
 	myTransform command;
 	// Q
-	if(key==113 && (command.x != 0 || command.y != 0 || command.z != 0)) {
+	if(key==113) {
 		command.transformType = "T";
-		command.x = .25; command.y = 0; command.z = .25;
+		command.x = .25; command.y = .5; command.z = .75;
 		command.id = idCounter;
 		idCounter++;
 		command.transformName = "Trans";
@@ -363,9 +363,9 @@ void keyboard(unsigned char key,int x,int y)
 	}
 
 	// W
-	if(key==119 && (command.x != 0 || command.y != 0 || command.z != 0)) {
+	if(key==119) {
 		command.transformType = "S";
-		command.x = 1.2; command.y = 1.2; command.z = 1.2;
+		command.x = 1.2; command.y = 1.3; command.z = 1.4;
 		command.id = idCounter;
 		idCounter++;
 		command.transformName = "Scale";
@@ -387,9 +387,9 @@ void keyboard(unsigned char key,int x,int y)
 	}
 
 	// E
-	if(key==101 && (command.x != 0 || command.y != 0 || command.z != 0)) {
+	if(key==101) {
 		command.transformType = "R";
-		command.x = 5; command.y = 0; command.z = 0;
+		command.x = 5; command.y = 10; command.z = 2;
 		command.id = idCounter;
 		idCounter++;
 		command.transformName = "Rot";
@@ -428,7 +428,7 @@ void keyboard(unsigned char key,int x,int y)
 	// O
 	if(key==111) {
 		// param is the id of a transform, so we will need to get the field being removed
-		removeFromStack(0);
+		removeFromStack(1);
 	}
 
 	glutPostRedisplay();
@@ -550,7 +550,7 @@ void myDisplay(void)
 		glVertex3d(lineList[36].x, lineList[36].y, lineList[36].z); glVertex3d(lineList[40].x, lineList[40].y, lineList[40].z);
 
 	glEnd();
-	// printString();
+	printString();
 	glutSwapBuffers();
 
 	glFlush();		                 // send all output to display 
